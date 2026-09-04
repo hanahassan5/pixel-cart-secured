@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Invoice #PX-<%= String(invoice.order.id).padStart(5, "0" ) %> | Pixel Cart</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            background: #f3f4f6;
+            color: #172033;
+        }
+
+        .invoice-shell {
+            max-width: 980px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .invoice-paper {
+            background: #fff;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, .12);
+            padding: 3rem;
+        }
+
+        .invoice-toolbar {
+            max-width: 980px;
+            margin: 1.5rem auto 0;
+            display: flex;
+            justify-content: flex-end;
+            gap: .75rem;
+        }
+
+        .invoice-toolbar button,
+        .invoice-toolbar a {
+            cursor: pointer;
+            border: 1px solid #d1d5db;
+            background: #172033;
+            color: #fff;
+            padding: .7rem 1rem;
+            text-decoration: none;
+            font: inherit;
+        }
+
+        .invoice-head,
+        .invoice-meta,
+        .invoice-parties,
+        .invoice-total-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .invoice-head {
+            border-bottom: 2px solid #172033;
+            padding-bottom: 2rem;
+            align-items: flex-start;
+        }
+
+        .invoice-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: .08em;
+        }
+
+        .invoice-kicker {
+            color: #667085;
+            font-size: .75rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .invoice-title {
+            font-size: 2.2rem;
+            margin: 0;
+            text-align: right;
+        }
+
+        .invoice-meta {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.25rem 0;
+        }
+
+        .invoice-meta div,
+        .invoice-party {
+            display: grid;
+            gap: .3rem;
+        }
+
+        .invoice-label {
+            color: #667085;
+            font-size: .75rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .invoice-parties {
+            padding: 1.75rem 0;
+        }
+
+        .invoice-party strong {
+            font-size: 1.05rem;
+        }
+
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .invoice-table th {
+            background: #172033;
+            color: #fff;
+            text-align: left;
+            font-size: .75rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .invoice-table th,
+        .invoice-table td {
+            padding: .85rem .75rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .invoice-table th:not(:first-child),
+        .invoice-table td:not(:first-child) {
+            text-align: right;
+        }
+
+        .invoice-totals {
+            margin: 1.5rem 0 0 auto;
+            max-width: 340px;
+        }
+
+        .invoice-total-row {
+            padding: .45rem 0;
+        }
+
+        .invoice-total-row.grand {
+            border-top: 2px solid #172033;
+            margin-top: .5rem;
+            padding-top: .85rem;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .invoice-footer {
+            border-top: 1px solid #e5e7eb;
+            margin-top: 3rem;
+            padding-top: 1.25rem;
+            color: #667085;
+            font-size: .85rem;
+            text-align: center;
+        }
+
+        @media print {
+            @page {
+                margin: 14mm;
+            }
+
+            body {
+                background: #fff;
+            }
+
+            .invoice-toolbar {
+                display: none;
+            }
+
+            .invoice-shell {
+                margin: 0;
+                max-width: none;
+                padding: 0;
+            }
+
+            .invoice-paper {
+                box-shadow: none;
+                padding: 0;
+            }
+
+            .invoice-table tr,
+            .invoice-parties,
+            .invoice-totals {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .invoice-paper {
+                padding: 1.25rem;
+            }
+
+            .invoice-head,
+            .invoice-meta,
+            .invoice-parties {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .invoice-title {
+                text-align: left;
+                font-size: 1.8rem;
+            }
+
+            .invoice-table {
+                font-size: .82rem;
+            }
+
+            .invoice-table th,
+            .invoice-table td {
+                padding: .65rem .35rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-toolbar">
+        <button type="button" onclick="window.print()">Print Invoice</button>
+        <a href="?orderId=<%= invoice.order.id %>&name=<!-- SSTI_CUSTOMER_NAME -->&download=1">Download Invoice</a>
+    </div>
+    <main class="invoice-shell">
+        <article class="invoice-paper">
+            <header class="invoice-head">
+                <div>
+                    <div class="invoice-brand">PIXEL CART</div>
+                    <div class="invoice-kicker">Gaming goods and digital play</div>
+                    <p>Local storefront invoice</p>
+                </div>
+                <div>
+                    <div class="invoice-kicker">Invoice</div>
+                    <h1 class="invoice-title">#PX-<%= String(invoice.order.id).padStart(5, "0" ) %>
+                    </h1>
+                </div>
+            </header>
+            <section class="invoice-meta">
+                <div><span class="invoice-label">Invoice date</span><strong>
+                        <%= new Date().toLocaleDateString() %>
+                    </strong></div>
+                <div><span class="invoice-label">Order date</span><strong>
+                        <%= new Date(invoice.order.created_at).toLocaleDateString() %>
+                    </strong></div>
+                <div><span class="invoice-label">Payment status</span><strong>Recorded</strong></div>
+                <div><span class="invoice-label">Order status</span><strong>
+                        <%= invoice.order.status %>
+                    </strong></div>
+            </section>
+            <section class="invoice-parties">
+                <div class="invoice-party"><span class="invoice-label">Billed
+                        to</span><strong><!-- SSTI_CUSTOMER_NAME --></strong><span>
+                        <%= invoice.order.customer_email %>
+                    </span></div>
+                <div class="invoice-party"><span class="invoice-label">From</span><strong>Pixel Cart</strong><span>Local
+                        project storefront</span></div>
+            </section>
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% invoice.items.forEach((item)=> { %>
+                        <tr>
+                            <td>
+                                <%= item.product_name %>
+                            </td>
+                            <td>
+                                <%= item.quantity %>
+                            </td>
+                            <td>$<%= Number(item.price).toFixed(2) %>
+                            </td>
+                            <td>$<%= (item.subtotal / 100).toFixed(2) %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+            <section class="invoice-totals">
+                <div class="invoice-total-row"><span>Subtotal</span><strong>$<%= (invoice.subtotal / 100).toFixed(2) %>
+                            </strong></div>
+                <div class="invoice-total-row"><span>Discount</span><strong>$0.00</strong></div>
+                <div class="invoice-total-row"><span>Tax / VAT</span><strong>$0.00</strong></div>
+                <div class="invoice-total-row"><span>Shipping</span><strong>$0.00</strong></div>
+                <div class="invoice-total-row grand"><span>Grand total</span><strong>$<%= (invoice.total /
+                            100).toFixed(2) %></strong></div>
+            </section>
+            <footer class="invoice-footer">Thank you for shopping with Pixel Cart. Keep this invoice for your records.
+            </footer>
+        </article>
+    </main>
+</body>
+
+</html>

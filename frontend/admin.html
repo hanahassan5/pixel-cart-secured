@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard | Pixel Cart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-container">
+            <a class="brand-link" href="admin.html">
+                <div class="brand-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">A</div>
+                <span>PIXEL CART <span class="badge badge-warning" style="margin-left: 0.5rem;">ADMIN</span></span>
+            </a>
+
+            <nav class="nav-menu">
+                <a class="nav-link" href="index.html">← Back to Store</a>
+                <a class="nav-link" href="products.html">Catalog</a>
+                <a class="nav-link" href="orders.html">Orders</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a id="nav-auth-link" class="btn btn-secondary btn-sm" href="profile.html">Admin Profile</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="container admin-layout">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <span class="eyebrow">Operations & Telemetry</span>
+                    <h1>System Management Console</h1>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="admin-nav-tabs">
+                <button type="button" class="admin-tab-btn active" data-tab="overview">Overview & Stats</button>
+                <button type="button" class="admin-tab-btn" data-tab="products">Products Manager</button>
+                <button type="button" class="admin-tab-btn" data-tab="orders">Orders Manager</button>
+                <button type="button" class="admin-tab-btn" data-tab="security">Security Lab Tools</button>
+            </div>
+
+            <!-- TAB 1: OVERVIEW & STATS -->
+            <section id="tab-overview" class="admin-tab-content">
+                <div class="stats-grid" style="margin-bottom: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Revenue</div>
+                        <div id="stat-revenue" class="stat-value">$0.00</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Orders</div>
+                        <div id="stat-orders" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Active Products</div>
+                        <div id="stat-products" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Registered Users</div>
+                        <div id="stat-users" class="stat-value">0</div>
+                    </div>
+                </div>
+
+                <div class="orders-table-wrapper">
+                    <div style="padding: 1.25rem; border-bottom: 1px solid var(--border-subtle);">
+                        <h3>Recent User Accounts</h3>
+                    </div>
+                    <div id="admin-recent-users"></div>
+                </div>
+            </section>
+
+            <!-- TAB 2: PRODUCTS MANAGER -->
+            <section id="tab-products" class="admin-tab-content" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>Catalog Management</h3>
+                    <button id="open-add-product-modal" class="btn btn-primary btn-sm">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <span>Add New Product</span>
+                    </button>
+                </div>
+                <div id="admin-products-table"></div>
+            </section>
+
+            <!-- TAB 3: ORDERS MANAGER -->
+            <section id="tab-orders" class="admin-tab-content" style="display: none;">
+                <div style="margin-bottom: 1.5rem;">
+                    <h3>Fulfillment & Status Control</h3>
+                </div>
+                <div id="admin-orders-table"></div>
+            </section>
+
+            <!-- TAB 4: SECURITY TOOLS (SSRF & COMMAND INJECTION) -->
+            <section id="tab-security" class="admin-tab-content" style="display: none;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2rem;">
+                    <!-- SSRF Form -->
+                    <div class="review-form-panel">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span class="badge badge-warning">SSRF TARGET</span>
+                            <h3>External Asset Fetcher</h3>
+                        </div>
+                        <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Fetches external digital cover images directly from remote web servers via backend Axios.</p>
+
+                        <form id="image-form">
+                            <div class="form-group">
+                                <label class="form-label" for="fetch-url">Remote Image URL</label>
+                                <input id="fetch-url" name="url" class="form-control" placeholder="http://127.0.0.1:3000/..." required>
+                            </div>
+                            <button type="submit" id="fetch-btn" class="btn btn-secondary btn-block">
+                                <span>Fetch Remote Resource</span>
+                            </button>
+                        </form>
+                        
+                        <div style="margin-top: 1.25rem;">
+                            <img id="image-result" style="display: none; max-width: 100%; border-radius: 8px; border: 1px solid var(--border-default);" alt="Fetched Preview">
+                        </div>
+                    </div>
+
+                    <!-- Command Injection Form -->
+                    <div class="review-form-panel">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span class="badge badge-danger">CMD INJECTION TARGET</span>
+                            <h3>Network Diagnostic Ping</h3>
+                        </div>
+                        <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Executes system ping utility to diagnose connectivity with remote game server endpoints.</p>
+
+                        <form id="ping-form">
+                            <div class="form-group">
+                                <label class="form-label" for="ping-ip">Destination Host or IP</label>
+                                <input id="ping-ip" name="ip" class="form-control" placeholder="127.0.0.1" required>
+                            </div>
+                            <button type="submit" id="ping-btn" class="btn btn-secondary btn-block">
+                                <span>Run Ping Diagnostic</span>
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 1.25rem;">
+                            <div class="form-label">Diagnostic Output:</div>
+                            <pre id="ping-result" class="admin-terminal">Waiting for execution...</pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal: Add New Product -->
+    <div id="add-product-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Product</h3>
+                <button type="button" id="close-modal-btn" style="color: var(--text-muted); font-size: 1.25rem;">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="create-product-form">
+                    <div class="form-group">
+                        <label class="form-label">Product Name</label>
+                        <input name="name" class="form-control" placeholder="e.g. Cyberpunk 2077 Deluxe" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-control" required>
+                                <option value="Games">Games</option>
+                                <option value="Controllers">Controllers</option>
+                                <option value="Headsets">Headsets</option>
+                                <option value="Keyboards">Keyboards</option>
+                                <option value="Mice">Mice</option>
+                                <option value="Accessories">Accessories</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Price ($)</label>
+                            <input name="price" type="number" step="0.01" class="form-control" placeholder="59.99" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Stock Units</label>
+                        <input name="stock" type="number" class="form-control" placeholder="25" value="25" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea name="description" class="form-control" placeholder="Short description of the product..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Product Image (File Upload)</label>
+                        <input name="image" type="file" accept="image/*" class="form-control" style="padding: 0.4rem 0.5rem;">
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                        <button type="button" id="cancel-modal-btn" class="btn btn-outline btn-sm">Cancel</button>
+                        <button type="submit" id="save-product-btn" class="btn btn-primary btn-sm">Create Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+
+</html>

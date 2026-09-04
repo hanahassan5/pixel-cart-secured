@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pixel Cart | Premium Games & Gear</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-container">
+            <a class="brand-link" href="index.html">
+                <div class="brand-icon">P</div>
+                <span>PIXEL CART</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a class="nav-link active" href="index.html">Home</a>
+                <a class="nav-link" href="products.html">Catalog</a>
+                <a class="nav-link" href="orders.html">Orders</a>
+            </nav>
+
+            <div class="nav-search">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input type="text" placeholder="Search catalog..." aria-label="Search">
+            </div>
+
+            <div class="nav-actions">
+                <a class="cart-button" href="cart.html" aria-label="Cart">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="8" cy="21" r="1" />
+                        <circle cx="19" cy="21" r="1" />
+                        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+                    </svg>
+                    <span class="cart-badge" style="display:none;">0</span>
+                </a>
+                <a id="nav-auth-link" class="btn btn-secondary btn-sm" href="login.html">Sign In</a>
+                <button class="mobile-toggle" aria-label="Toggle navigation">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" x2="20" y1="12" y2="12" />
+                        <line x1="4" x2="20" y1="6" y2="6" />
+                        <line x1="4" x2="20" y1="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        <section class="hero-section" id="hero">
+            <div class="hero-bg-grid" aria-hidden="true"></div>
+            <div class="hero-bg-glow" aria-hidden="true"></div>
+
+            <div class="container hero-container">
+                <div class="hero-narrative">
+                    <div class="hero-series-badge">
+                        <span class="series-indicator"></span>
+                        <span class="series-title">PRECISION HARDWARE // 2026</span>
+                    </div>
+
+                    <h1 class="hero-heading">
+                        Gear that feels<br>
+                        as good as it plays.
+                    </h1>
+
+                    <p class="hero-summary">
+                        Tactile mechanical switches, sub-millisecond wireless tracking, and studio-grade acoustics.
+                        Built for endurance, calibrated for competition.
+                    </p>
+
+                    <div class="hero-cta-wrapper">
+                        <a class="hero-btn-primary" href="products.html">
+                            <span>Shop Gaming Gear</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                        <a class="hero-btn-secondary" href="products.html?sort=newest">
+                            <span>Explore New Arrivals</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-category-nav">
+                        <span class="category-nav-label">QUICK JUMP</span>
+                        <div class="category-nav-items">
+                            <a href="products.html?category=Keyboards">Keyboards</a>
+                            <span class="sep">/</span>
+                            <a href="products.html?category=Mice">Mice</a>
+                            <span class="sep">/</span>
+                            <a href="products.html?category=Headsets">Headsets</a>
+                            <span class="sep">/</span>
+                            <a href="products.html?category=Controllers">Controllers</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual-stage">
+                    <div class="composition-wrapper">
+                        <span class="stage-bracket bracket-tl" aria-hidden="true"></span>
+                        <span class="stage-bracket bracket-br" aria-hidden="true"></span>
+
+                        <!-- Main Product Frame -->
+                        <div class="main-product-frame">
+                            <div class="product-media-wrap">
+                                <img src="assets/products/mech-keyboard.jpg" alt="Mech Keyboard Flagship Peripherals"
+                                    class="main-product-img" loading="eager">
+                                <div class="product-overlay-gradient" aria-hidden="true"></div>
+                            </div>
+                            <div class="product-spec-strip">
+                                <div class="spec-cell">
+                                    <span class="spec-label">CHASSIS</span>
+                                    <span class="spec-value">CNC ALUMINUM</span>
+                                </div>
+                                <div class="spec-divider"></div>
+                                <div class="spec-cell">
+                                    <span class="spec-label">RATE</span>
+                                    <span class="spec-value">8,000 HZ</span>
+                                </div>
+                                <div class="spec-divider"></div>
+                                <div class="spec-cell">
+                                    <span class="spec-label">ACTUATION</span>
+                                    <span class="spec-value">RAPID TRIGGER</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Floating Companion: Mouse -->
+                        <div class="secondary-product-float">
+                            <div class="secondary-media-wrap">
+                                <img src="assets/products/vector-mouse.jpg" alt="Vector Optical Mouse"
+                                    class="secondary-product-img" loading="eager">
+                            </div>
+                            <div class="secondary-meta">
+                                <span class="secondary-tag">COMPANION</span>
+                                <h4 class="secondary-title">Vector Ultra Mouse</h4>
+                                <span class="secondary-spec">58g • 26K DPI Optical</span>
+                            </div>
+                        </div>
+
+                        <!-- Live Stock Indicator -->
+                        <div class="stage-status-tag">
+                            <span class="status-pulse"></span>
+                            <span class="status-text">IN STOCK // DISPATCH TODAY</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="trust-bar">
+            <div class="container trust-container">
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <span class="trust-title">Instant Key Delivery</span>
+                        <span class="trust-desc">Immediate code retrieval in profile</span>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <span class="trust-title">100% Genuine Hardware</span>
+                        <span class="trust-desc">Direct from verified manufacturers</span>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="m9 12 2 2 4-4" />
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <span class="trust-title">30-Day Guarantee</span>
+                        <span class="trust-desc">Hassle-free replacement policy</span>
+                    </div>
+                </div>
+                <div class="trust-item">
+                    <div class="trust-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                    </div>
+                    <div class="trust-text">
+                        <span class="trust-title">Secured Checkout</span>
+                        <span class="trust-desc">Encrypted payment processing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories & Inventory Section -->
+        <section class="section-spacing">
+            <div class="container">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+                    <div>
+                        <span class="eyebrow">Explore Collections</span>
+                        <h2>Popular Categories</h2>
+                    </div>
+                    <a class="btn btn-outline btn-sm" href="products.html">View Full Catalog →</a>
+                </div>
+
+                <div class="category-shelf">
+                    <a class="category-chip active" href="products.html">All Items</a>
+                    <a class="category-chip" href="products.html?category=Games">🎮 Games</a>
+                    <a class="category-chip" href="products.html?category=Controllers">🕹️ Controllers</a>
+                    <a class="category-chip" href="products.html?category=Headsets">🎧 Headsets</a>
+                    <a class="category-chip" href="products.html?category=Keyboards">⌨️ Keyboards</a>
+                    <a class="category-chip" href="products.html?category=Mice">🖱️ Mice</a>
+                    <a class="category-chip" href="products.html?category=Accessories">⚡ Accessories</a>
+                </div>
+
+                <div id="products" class="product-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="brand-link" href="index.html">
+                        <div class="brand-icon">P</div>
+                        <span>PIXEL CART</span>
+                    </a>
+                    <p>The definitive gaming storefront for independent titles, top-tier hardware, and tournament-grade
+                        peripherals.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Catalog</h4>
+                    <ul class="footer-links">
+                        <li><a href="products.html?category=Games">Video Games</a></li>
+                        <li><a href="products.html?category=Controllers">Pro Controllers</a></li>
+                        <li><a href="products.html?category=Headsets">Gaming Audio</a></li>
+                        <li><a href="products.html?category=Keyboards">Mechanical Keyboards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <ul class="footer-links">
+                        <li><a href="profile.html">My Profile</a></li>
+                        <li><a href="orders.html">Order History</a></li>
+                        <li><a href="cart.html">Shopping Cart</a></li>
+                        <li><a href="login.html">Sign In</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Assurance</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Instant Digital Delivery</a></li>
+                        <li><a href="#">Warranty & Repairs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Pixel Cart. All rights reserved.</p>
+                <p class="mono text-xs text-muted">SECURED PLATFORM / PRODUCTION GRADE</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
