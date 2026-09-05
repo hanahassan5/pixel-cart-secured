@@ -238,12 +238,19 @@ export const deleteProduct = async (req, res, next) => {
 export const download = (req, res, next) => {
     try {
         const filename = req.query.file;
-        if (!filename) {
+        if (!filename || typeof filename !== "string") {
             return res.status(400).json({ success: false, error: "File parameter is required" });
         }
 
-        // Intentionally vulnerable to Path Traversal
-        const filePath = path.join(UPLOADS_ROOT, filename);
+        // Strip any directory components — only a bare filename is allowed
+        const safeName = path.basename(filename);
+        const filePath = path.join(UPLOADS_ROOT, safeName);
+
+        // Belt-and-braces: confirm the resolved path is still inside UPLOADS_ROOT
+        if (!filePath.startsWith(path.resolve(UPLOADS_ROOT) + path.sep)) {
+            return res.status(400).json({ success: false, error: "Invalid file path" });
+        }
+
         res.download(filePath);
     } catch (error) {
         return next(new AppError("Failed to download file", 500, error));
