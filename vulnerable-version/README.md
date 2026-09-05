@@ -36,3 +36,25 @@ Admin: `GET /api/admin/stats`, `GET /api/admin/users`, `GET /api/admin/orders`, 
 The backend is organized as router -> controller -> service -> repository -> database. The frontend keeps page logic in separate files under `frontend/js`, with `api.js` as the shared Fetch layer.
 
 Assignment-specific vulnerable behavior is isolated to its named endpoints as required by the academic exercise.
+
+
+## Team
+
+- Track: Web Application Security
+- Project Name: Pixel Cart
+
+| Name | Responsibility |
+|---|---|
+| Kamal Ibrahim | Built the vulnerable version of the web application (all vulnerability sinks) |
+
+## Vulnerabilities Implemented
+
+1. SQL Injection — `GET /api/products?search=`
+2. Stored XSS — product review content
+3. Server-Side Template Injection (SSTI) — invoice generation
+4. Open Redirect — `GET /api/auth/login?next=`
+5. Information Disclosure — stack traces returned in error responses
+6. OS Command Injection — `POST /api/admin/ping`
+7. Server-Side Request Forgery (SSRF) — `POST /api/admin/image`
+8. Path Traversal — `GET /api/products/download?file=`
+9. Cross-Site Request Forgery (CSRF) — session cookie + permissive CORS
