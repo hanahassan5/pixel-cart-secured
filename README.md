@@ -28,7 +28,7 @@ The goal is to show, side by side, how each vulnerability works and how it can b
 ## Project Structure
 
 ```text
-pixel-cart-secured/
+pixel-cart-Bug Bounty-Project/
 ├── vulnerable-version/   -> intentionally contains all 9 vulnerabilities
 └── secured-version/      -> same application, all 9 vulnerabilities fixed
 ```
