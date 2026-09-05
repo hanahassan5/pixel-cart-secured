@@ -13,6 +13,11 @@ npm run db:setup
 npm start
 ```
 
+## Requirements / Libraries
+
+- Node.js (v18+ recommended)
+- MySQL (local instance)
+
 Open `http://localhost:3000`, or the port configured in `.env`. The frontend is served by Express.
 
 ## Database
@@ -47,7 +52,7 @@ Assignment-specific vulnerable behavior is isolated to its named endpoints as re
 |---|---|
 | Haidy Abdelkareem | set up the project copy and GitHub repository structure, Fixed SSRF and CSRF |
 | Hana Hassan | Fixed SQL Injection, Stored XSS, SSTI, Open Redirect, Information Disclosure |
-| Nouran Ghopashi | Fixed Path Traversal |
+| Nouran Ghopashy | Fixed Path Traversal |
 | Nada Mahrous | Fixed OS Command Injection |
 
 ## Vulnerabilities Fixed
