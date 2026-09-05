@@ -1,193 +1,206 @@
-Application Under Test
-Base URL: http://127.0.0.1:3000
-Backend: Express with MySQL and session authentication
-Frontend: vanilla HTML/CSS/JavaScript
-Same seeded/local test data as the vulnerable-version verification
-Fix #1 - SQL Injection
-Target
 
-GET /api/products?search=
+## Application Under Test
 
-Malicious Test (repeated)
+- Base URL: `http://127.0.0.1:3000`
+- Backend: Express with MySQL and session authentication
+- Frontend: vanilla HTML/CSS/JavaScript
+- Same seeded/local test data as the vulnerable-version verification
 
-GET /api/products?search=%27%20OR%201%3D1%20%23
+## Fix #1 - SQL Injection
 
-Result
+### Target
+
+`GET /api/products?search=`
+
+### Malicious Test (repeated)
+
+`GET /api/products?search=%27%20OR%201%3D1%20%23`
+
+### Result
 
 HTTP 200, but the response now returns an empty/normal filtered result instead of the full product collection.
 
-Fix Applied
+### Fix Applied
 
-product.controller.js now builds the query as SELECT * FROM products WHERE name LIKE ? and passes `%${filters.search}%` as a bound parameter via pool.query(query, [searchValue]). The payload is treated as a literal search string, not as SQL.
+`product.controller.js` now builds the query as `SELECT * FROM products WHERE name LIKE ?` and passes `` `%${filters.search}%` `` as a bound parameter via `pool.query(query, [searchValue])`. The payload is treated as a literal search string, not as SQL.
 
-Verdict
+### Verdict
 
-Fixed. The tautology no longer changes query behavior.
+**Fixed.** The tautology no longer changes query behavior.
 
-Fix #2 - Stored XSS
-Target
+## Fix #2 - Stored XSS
 
-POST /api/products/4/reviews, then product page review rendering.
+### Target
 
-Malicious Test (repeated)
+`POST /api/products/4/reviews`, then product page review rendering.
+
+### Malicious Test (repeated)
 
 Submit the same harmless local marker script used in the vulnerable-version test as review content.
 
-Result
+### Result
 
-The review text is displayed literally on the page (e.g. as visible <script>...</script> text) instead of executing.
+The review text is displayed literally on the page (e.g. as visible `<script>...</script>` text) instead of executing.
 
-Fix Applied
+### Fix Applied
 
-frontend/js/product.js:268 now assigns the stored review value with card.querySelector(".review-body").textContent = review.content instead of .innerHTML. The browser renders it as plain text, so it can no longer reach the DOM as executable HTML.
+`frontend/js/product.js:268` now assigns the stored review value with `card.querySelector(".review-body").textContent = review.content` instead of `.innerHTML`. The browser renders it as plain text, so it can no longer reach the DOM as executable HTML.
 
-Verdict
+### Verdict
 
-Fixed. The stored payload no longer executes in the browser.
+**Fixed.** The stored payload no longer executes in the browser.
 
-Fix #3 - SSTI Against Invoice
-Target
+## Fix #3 - SSTI Against Invoice
 
-Authenticated GET /api/users/invoice?orderId=9&name=
+### Target
 
-Malicious Test (repeated)
+Authenticated `GET /api/users/invoice?orderId=9&name=`
 
-GET /api/users/invoice?orderId=9&name=%3C%25%3D%207%20%2B%207%20%25%3E
+### Malicious Test (repeated)
 
-Result
+`GET /api/users/invoice?orderId=9&name=%3C%25%3D%207%20%2B%207%20%25%3E`
 
-HTTP 200. The invoice renders normally, and the customer field shows the literal text <%= 7 + 7 %> (URL-decoded/escaped), not the evaluated result 14.
+### Result
 
-Fix Applied
+HTTP 200. The invoice renders normally, and the customer field shows the literal text `<%= 7 + 7 %>` (URL-decoded/escaped), not the evaluated result `14`.
 
-user.controller.js no longer splices the query value into the EJS template source before rendering. It now calls ejs.render(source, { invoice, customerName }), passing the user-supplied name as a data variable. invoice.ejs prints it with <%= customerName %>, which EJS auto-escapes as plain output — the string is never re-parsed as template syntax.
+### Fix Applied
 
-Verdict
+`user.controller.js` no longer splices the query value into the EJS template source before rendering. It now calls `ejs.render(source, { invoice, customerName })`, passing the user-supplied name as a **data variable**. `invoice.ejs` prints it with `<%= customerName %>`, which EJS auto-escapes as plain output — the string is never re-parsed as template syntax.
 
-Fixed. Attacker-supplied template syntax is no longer evaluated by the server.
+### Verdict
 
-Fix #4 - Path Traversal
-Target
+**Fixed.** Attacker-supplied template syntax is no longer evaluated by the server.
 
-GET /api/products/download?file=
+## Fix #4 - Path Traversal
 
-Malicious Test (repeated)
+### Target
 
-GET /api/products/download?file=../src/views/invoice.ejs
+`GET /api/products/download?file=`
 
-Result
+### Malicious Test (repeated)
 
-HTTP 400 {"success": false, "error": "Invalid file path"} (or the file is silently reduced to a bare filename inside the uploads folder, which then 404s if it doesn't exist there).
+`GET /api/products/download?file=../src/views/invoice.ejs`
 
-Fix Applied
+### Result
 
-product.controller.js now runs the requested name through path.basename(filename) before joining it to UPLOADS_ROOT, stripping any ../ or directory components, and then verifies the resolved path is still contained inside UPLOADS_ROOT before calling res.download.
+HTTP 400 `{"success": false, "error": "Invalid file path"}` (or the file is silently reduced to a bare filename inside the uploads folder, which then 404s if it doesn't exist there).
 
-Verdict
+### Fix Applied
 
-Fixed. The request can no longer escape the uploads directory.
+`product.controller.js` now runs the requested name through `path.basename(filename)` before joining it to `UPLOADS_ROOT`, stripping any `../` or directory components, and then verifies the resolved path is still contained inside `UPLOADS_ROOT` before calling `res.download`.
 
-Fix #5 - CSRF
-Target
+### Verdict
 
-Authenticated POST /api/cart from a second local origin.
+**Fixed.** The request can no longer escape the uploads directory.
 
-Malicious Test (repeated)
+## Fix #5 - CSRF
 
-Send the same cross-origin preflight/POST from an untrusted local origin (e.g. an origin not in the allowlist, such as http://127.0.0.1:6000).
+### Target
 
-Result
+Authenticated `POST /api/cart` from a second local origin.
 
-The preflight/response no longer includes Access-Control-Allow-Origin for the untrusted origin, and the browser blocks the cross-origin request before the session cookie is used. The session cookie itself is now SameSite=Strict, so it is not attached to cross-site requests at all.
+### Malicious Test (repeated)
 
-Fix Applied
+Send the same cross-origin preflight/POST from an untrusted local origin (e.g. an origin not in the allowlist, such as `http://127.0.0.1:6000`).
 
-app.js — the CORS middleware now checks the request origin against an explicit ALLOWED_ORIGINS list and only sets CORS headers for a match (no more reflecting any origin, no more wildcard fallback). The session cookie config was changed from sameSite: false to sameSite: "strict".
+### Result
 
-Verdict
+The preflight/response no longer includes `Access-Control-Allow-Origin` for the untrusted origin, and the browser blocks the cross-origin request before the session cookie is used. The session cookie itself is now `SameSite=Strict`, so it is not attached to cross-site requests at all.
 
-Fixed. An untrusted origin can no longer make a credentialed cross-origin state-changing request.
+### Fix Applied
 
-Fix #6 - SSRF
-Target
+`app.js` — the CORS middleware now checks the request origin against an explicit `ALLOWED_ORIGINS` list and only sets CORS headers for a match (no more reflecting any origin, no more wildcard fallback). The session cookie config was changed from `sameSite: false` to `sameSite: "strict"`.
 
-Admin POST /api/admin/image.
+### Verdict
 
-Malicious Test (repeated)
+**Fixed.** An untrusted origin can no longer make a credentialed cross-origin state-changing request.
 
-Submit a loopback/internal URL as url, e.g. http://127.0.0.1:3000/api/admin/stats or http://169.254.169.254/.
+## Fix #6 - SSRF
 
-Result
+### Target
 
-HTTP 400 {"success": false, "error": "Requests to internal addresses are not allowed"}.
+Admin `POST /api/admin/image`.
 
-Fix Applied
+### Malicious Test (repeated)
 
-admin.controller.js now parses the submitted URL, rejects any scheme other than http:/https:, and rejects hostnames resolving to loopback, private, or link-local ranges (127.x, 10.x, 192.168.x, 169.254.x, 172.16-31.x, localhost, ::1) before making the outbound request. maxRedirects: 0 prevents a redirect-based bypass of the check.
+Submit a loopback/internal URL as `url`, e.g. `http://127.0.0.1:3000/api/admin/stats` or `http://169.254.169.254/`.
 
-Verdict
+### Result
 
-Fixed. Requests to internal/loopback targets are rejected before any outbound call is made.
+HTTP 400 `{"success": false, "error": "Requests to internal addresses are not allowed"}`.
 
-Fix #7 - OS Command Injection
-Target
+### Fix Applied
 
-Admin POST /api/admin/ping.
+`admin.controller.js` now parses the submitted URL, rejects any scheme other than `http:`/`https:`, and rejects hostnames resolving to loopback, private, or link-local ranges (`127.x`, `10.x`, `192.168.x`, `169.254.x`, `172.16-31.x`, `localhost`, `::1`) before making the outbound request. `maxRedirects: 0` prevents a redirect-based bypass of the check.
 
-Malicious Test (repeated)
+### Verdict
 
-Submit the same shell metacharacter payload used in the vulnerable-version test, e.g. 127.0.0.1 && echo pwned.
+**Fixed.** Requests to internal/loopback targets are rejected before any outbound call is made.
 
-Result
+## Fix #7 - OS Command Injection
 
-HTTP 400 {"success": false, "error": "Invalid IP address"} — the request is rejected before any command runs.
+### Target
 
-Fix Applied
+Admin `POST /api/admin/ping`.
 
-admin.controller.js now validates req.body.ip against a strict IPv4 regex before use, and replaced child_process.exec("ping " + ... ) (string-based, runs through a shell) with execFile("ping", [flag, "2", ip], ...), which passes arguments as an array and never invokes a shell — so even if a value passed the regex, shell metacharacters would not be interpreted.
+### Malicious Test (repeated)
 
-Verdict
+Submit the same shell metacharacter payload used in the vulnerable-version test, e.g. `127.0.0.1 && echo pwned`.
 
-Fixed. Shell metacharacters can no longer be injected into the executed command.
+### Result
 
-Fix #8 - Open Redirect
-Target
+HTTP 400 `{"success": false, "error": "Invalid IP address"}` — the request is rejected before any command runs.
 
-POST /api/auth/login?next=
+### Fix Applied
 
-Malicious Test (repeated)
+`admin.controller.js` now validates `req.body.ip` against a strict IPv4 regex before use, and replaced `child_process.exec("ping " + ... )` (string-based, runs through a shell) with `execFile("ping", [flag, "2", ip], ...)`, which passes arguments as an array and never invokes a shell — so even if a value passed the regex, shell metacharacters would not be interpreted.
 
-Log in with next=https://example.com (external) and next=//example.com (protocol-relative).
+### Verdict
 
-Result
+**Fixed.** Shell metacharacters can no longer be injected into the executed command.
 
-Both are rejected/ignored; the login response no longer redirects off-site. Only a same-site path such as next=/profile.html is honored.
+## Fix #8 - Open Redirect
 
-Fix Applied
+### Target
 
-auth.controller.js:38 changed the condition from if (req.query.next) to if (req.query.next && req.query.next.startsWith("/") && !req.query.next.startsWith("//")), so only relative, same-origin paths are accepted as redirect targets.
+`POST /api/auth/login?next=`
 
-Verdict
+### Malicious Test (repeated)
 
-Fixed. External and protocol-relative redirect targets are no longer honored.
+Log in with `next=https://example.com` (external) and `next=//example.com` (protocol-relative).
 
-Fix #9 - Information Disclosure
-Target
+### Result
+
+Both are rejected/ignored; the login response no longer redirects off-site. Only a same-site path such as `next=/profile.html` is honored.
+
+### Fix Applied
+
+`auth.controller.js:38` changed the condition from `if (req.query.next)` to `if (req.query.next && req.query.next.startsWith("/") && !req.query.next.startsWith("//"))`, so only relative, same-origin paths are accepted as redirect targets.
+
+### Verdict
+
+**Fixed.** External and protocol-relative redirect targets are no longer honored.
+
+## Fix #9 - Information Disclosure
+
+### Target
 
 Any controlled application error reaching the global error handler.
 
-Malicious Test (repeated)
+### Malicious Test (repeated)
 
 Trigger the same harmless controlled error used in the vulnerable-version test.
 
-Result
+### Result
 
-The JSON error response contains only {"success": false, "error": "<message>"} — no stack field, no file paths, no line numbers.
+The JSON error response contains only `{"success": false, "error": "<message>"}` — no `stack` field, no file paths, no line numbers.
 
-Fix Applied
+### Fix Applied
 
-errorHandler.js now logs err.stack server-side with console.error(err.stack) and no longer includes it in the response body sent to the client.
+`errorHandler.js` now logs `err.stack` server-side with `console.error(err.stack)` and no longer includes it in the response body sent to the client.
 
-Verdict
+### Verdict
 
-Fixed. Internal stack traces are no longer exposed to the client.
+**Fixed.** Internal stack traces are no longer exposed to the client.
+
