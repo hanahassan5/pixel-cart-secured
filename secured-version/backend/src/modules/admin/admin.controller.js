@@ -49,10 +49,44 @@ export const updateOrderStatus = async (req, res, next) => {
     }
 };
 
+import { URL } from "url";
+import net from "net";
+
+const isPrivateOrLoopback = (hostname) => {
+    if (hostname === "localhost") return true;
+    if (net.isIP(hostname)) {
+        return (
+            hostname.startsWith("127.") ||
+            hostname.startsWith("10.") ||
+            hostname.startsWith("192.168.") ||
+            hostname.startsWith("169.254.") ||
+            /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname) ||
+            hostname === "::1"
+        );
+    }
+    return false;
+};
+
 export const fetchImage = async (req, res, next) => {
     try {
-        // Intentionally vulnerable to SSRF: directly fetches user-supplied URL with Axios
-        const response = await axios.get(req.body.url, { responseType: "arraybuffer" });
+        let parsed;
+        try {
+            parsed = new URL(req.body.url);
+        } catch {
+            return res.status(400).json({ success: false, error: "Invalid URL" });
+        }
+
+        if (!["http:", "https:"].includes(parsed.protocol)) {
+            return res.status(400).json({ success: false, error: "Only http/https URLs are allowed" });
+        }
+        if (isPrivateOrLoopback(parsed.hostname)) {
+            return res.status(400).json({ success: false, error: "Requests to internal addresses are not allowed" });
+        }
+
+        const response = await axios.get(parsed.toString(), {
+            responseType: "arraybuffer",
+            maxRedirects: 0
+        });
         res.type(response.headers["content-type"] || "application/octet-stream").send(response.data);
     } catch (error) {
         next(error);
