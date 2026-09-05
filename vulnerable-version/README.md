@@ -13,6 +13,11 @@ npm run db:setup
 npm start
 ```
 
+## Requirements / Libraries
+
+- Node.js (v18+ recommended)
+- MySQL (local instance)
+
 Open `http://localhost:3000`, or the port configured in `.env`. The frontend is served by Express.
 
 ## Database
