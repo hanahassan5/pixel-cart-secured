@@ -59,10 +59,19 @@ export const fetchImage = async (req, res, next) => {
     }
 };
 
+import { execFile } from "child_process";
+
+const IP_REGEX = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/;
+
 export const ping = (req, res, next) => {
-    // Intentionally vulnerable to OS Command Injection: concatenates user input directly into system command
+    const { ip } = req.body;
+
+    if (!ip || typeof ip !== "string" || !IP_REGEX.test(ip)) {
+        return res.status(400).json({ success: false, error: "Invalid IP address" });
+    }
+
     const pingCountFlag = process.platform === "win32" ? "-n" : "-c";
-    child_process.exec("ping " + pingCountFlag + " 2 " + req.body.ip, (err, stdout) => {
+    execFile("ping", [pingCountFlag, "2", ip], (err, stdout) => {
         if (err) return next(err);
         res.type("text/plain").send(stdout);
     });
