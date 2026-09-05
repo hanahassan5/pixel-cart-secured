@@ -49,9 +49,8 @@ export const invoice = async (req, res, next) => {
         const templatePath = new URL("../../views/invoice.ejs", import.meta.url);
         const source = await readFile(templatePath, "utf8");
         // Intentionally vulnerable to SSTI: attacker input is inserted into EJS source before rendering.
-        const template = source.replaceAll("<!-- SSTI_CUSTOMER_NAME -->", req.query.name ?? order.customer_name);
-        const html = ejs.render(template, { invoice });
-
+        const customerName = req.query.name ?? order.customer_name;
+        const html = ejs.render(source, { invoice, customerName });
         if (req.query.download === "1") {
             res.attachment(`invoice-${order.id}.html`);
         }

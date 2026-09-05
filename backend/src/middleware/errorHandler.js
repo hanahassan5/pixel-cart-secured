@@ -13,8 +13,9 @@ export const errorHandler = (err, req, res, next) => {
         }
     }
 
+    console.error(err.stack);
+
     res.status(statusCode).json({
-        error: message,
-        stack: err.stack
+        error: message
     });
 };

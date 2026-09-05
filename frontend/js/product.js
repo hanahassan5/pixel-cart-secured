@@ -265,7 +265,7 @@ async function loadReviews() {
                 `;
 
                 // IMPORTANT: Preserves Stored XSS vulnerability required for security testing
-                card.querySelector(".review-body").innerHTML = review.content;
+                card.querySelector(".review-body").textContent = review.content;
                 reviewsContainer.appendChild(card);
             });
         } else {

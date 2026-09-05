@@ -218,7 +218,7 @@
 <body>
     <div class="invoice-toolbar">
         <button type="button" onclick="window.print()">Print Invoice</button>
-        <a href="?orderId=<%= invoice.order.id %>&name=<!-- SSTI_CUSTOMER_NAME -->&download=1">Download Invoice</a>
+        <a href="?orderId=<%= invoice.order.id %>&name=<%= encodeURIComponent(customerName) %>&download=1">Download Invoice</a>
     </div>
     <main class="invoice-shell">
         <article class="invoice-paper">
@@ -248,7 +248,7 @@
             </section>
             <section class="invoice-parties">
                 <div class="invoice-party"><span class="invoice-label">Billed
-                        to</span><strong><!-- SSTI_CUSTOMER_NAME --></strong><span>
+                        to</span><strong><%= customerName %></strong><span>
                         <%= invoice.order.customer_email %>
                     </span></div>
                 <div class="invoice-party"><span class="invoice-label">From</span><strong>Pixel Cart</strong><span>Local

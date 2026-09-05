@@ -14,12 +14,10 @@ export const listProducts = async (req, res, next) => {
 
         // Intentionally vulnerable to SQL Injection
         if (filters.search) {
-            const query =
-                "SELECT * FROM products WHERE name LIKE '%" +
-                filters.search +
-                "%'";
+            const query = "SELECT * FROM products WHERE name LIKE ?";
+            const searchValue = `%${filters.search}%`;
 
-            const [rows] = await pool.query(query);
+            const [rows] = await pool.query(query, [searchValue]);
 
             return res.status(200).json({
                 success: true,
