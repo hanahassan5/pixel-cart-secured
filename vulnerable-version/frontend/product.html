@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Product Details | Pixel Cart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container nav-container">
+            <a class="brand-link" href="index.html">
+                <div class="brand-icon">P</div>
+                <span>PIXEL CART</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link active" href="products.html">Catalog</a>
+                <a class="nav-link" href="products.html?category=Games">Games</a>
+                <a class="nav-link" href="products.html?category=Controllers">Gear</a>
+                <a class="nav-link" href="orders.html">Orders</a>
+            </nav>
+
+            <div class="nav-search">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" placeholder="Search catalog..." aria-label="Search">
+            </div>
+
+            <div class="nav-actions">
+                <a class="cart-button" href="cart.html" aria-label="Cart">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    <span class="cart-badge" style="display:none;">0</span>
+                </a>
+                <a id="nav-auth-link" class="btn btn-secondary btn-sm" href="login.html">Sign In</a>
+                <button class="mobile-toggle" aria-label="Toggle navigation">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="container">
+            <div id="product-breadcrumb" class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <a href="products.html">Catalog</a>
+                <span>/</span>
+                <span id="breadcrumb-product-name" class="text-primary">Loading...</span>
+            </div>
+
+            <div id="product"></div>
+
+            <section class="reviews-section">
+                <div class="reviews-header">
+                    <div>
+                        <span class="eyebrow">Verified Feedback</span>
+                        <h2>Customer Reviews</h2>
+                    </div>
+                </div>
+
+                <div class="reviews-grid">
+                    <!-- Left column: Summary & Submission -->
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Real Rating Breakdown & Score Card -->
+                        <div class="rating-summary-card">
+                            <div class="rating-overview-block">
+                                <div id="summary-avg-score" class="rating-score-large">—</div>
+                                <div>
+                                    <div id="summary-avg-stars" class="rating-stars-lg">☆☆☆☆☆</div>
+                                    <div id="summary-review-count" class="text-xs text-muted" style="margin-top: 0.25rem;">No reviews yet</div>
+                                </div>
+                            </div>
+
+                            <!-- Real Distribution Breakdown -->
+                            <div class="rating-breakdown">
+                                <div class="rating-bar-row">
+                                    <span class="rating-bar-label">5 ★</span>
+                                    <div class="rating-bar-track"><div id="dist-bar-5" class="rating-bar-fill" style="width: 0%;"></div></div>
+                                    <span id="dist-count-5" class="rating-bar-count">0</span>
+                                </div>
+                                <div class="rating-bar-row">
+                                    <span class="rating-bar-label">4 ★</span>
+                                    <div class="rating-bar-track"><div id="dist-bar-4" class="rating-bar-fill" style="width: 0%;"></div></div>
+                                    <span id="dist-count-4" class="rating-bar-count">0</span>
+                                </div>
+                                <div class="rating-bar-row">
+                                    <span class="rating-bar-label">3 ★</span>
+                                    <div class="rating-bar-track"><div id="dist-bar-3" class="rating-bar-fill" style="width: 0%;"></div></div>
+                                    <span id="dist-count-3" class="rating-bar-count">0</span>
+                                </div>
+                                <div class="rating-bar-row">
+                                    <span class="rating-bar-label">2 ★</span>
+                                    <div class="rating-bar-track"><div id="dist-bar-2" class="rating-bar-fill" style="width: 0%;"></div></div>
+                                    <span id="dist-count-2" class="rating-bar-count">0</span>
+                                </div>
+                                <div class="rating-bar-row">
+                                    <span class="rating-bar-label">1 ★</span>
+                                    <div class="rating-bar-track"><div id="dist-bar-1" class="rating-bar-fill" style="width: 0%;"></div></div>
+                                    <span id="dist-count-1" class="rating-bar-count">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Review submission form -->
+                        <div class="review-form-panel">
+                            <h3 style="margin-bottom: 0.5rem;">Write a Review</h3>
+                            <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Share your gameplay impressions and gear performance.</p>
+                            
+                            <form id="review-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="review-rating">Your Rating</label>
+                                    <select id="review-rating" name="rating" class="form-control" required>
+                                        <option value="5">★★★★★ 5 Stars (Outstanding)</option>
+                                        <option value="4">★★★★☆ 4 Stars (Very Good)</option>
+                                        <option value="3">★★★☆☆ 3 Stars (Average)</option>
+                                        <option value="2">★★☆☆☆ 2 Stars (Below Expectation)</option>
+                                        <option value="1">★☆☆☆☆ 1 Star (Disappointing)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="review-content">Review Details</label>
+                                    <textarea id="review-content" name="content" class="form-control" placeholder="What did you like or dislike about this product?" required></textarea>
+                                </div>
+
+                                <button type="submit" id="submit-review-btn" class="btn btn-primary btn-block">
+                                    <span>Post Review</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Reviews list -->
+                    <div id="reviews" class="review-list"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a class="brand-link" href="index.html">
+                        <div class="brand-icon">P</div>
+                        <span>PIXEL CART</span>
+                    </a>
+                    <p>The definitive gaming storefront for independent titles, top-tier hardware, and tournament-grade peripherals.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Catalog</h4>
+                    <ul class="footer-links">
+                        <li><a href="products.html?category=Games">Video Games</a></li>
+                        <li><a href="products.html?category=Controllers">Pro Controllers</a></li>
+                        <li><a href="products.html?category=Headsets">Gaming Audio</a></li>
+                        <li><a href="products.html?category=Keyboards">Mechanical Keyboards</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <ul class="footer-links">
+                        <li><a href="profile.html">My Profile</a></li>
+                        <li><a href="orders.html">Order History</a></li>
+                        <li><a href="cart.html">Shopping Cart</a></li>
+                        <li><a href="login.html">Sign In</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Assurance</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Instant Digital Delivery</a></li>
+                        <li><a href="#">Warranty & Repairs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>© 2026 Pixel Cart. All rights reserved.</p>
+                <p class="mono text-xs text-muted">SECURED PLATFORM / PRODUCTION GRADE</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/product.js"></script>
+</body>
+
+</html>

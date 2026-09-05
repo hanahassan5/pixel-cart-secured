@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Account | Pixel Cart</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div class="auth-page">
+        <!-- Left Side: Cinematic Brand & Hardware Visual -->
+        <div class="auth-showcase">
+            <div class="auth-showcase-grid" aria-hidden="true"></div>
+            <div class="auth-showcase-glow" aria-hidden="true"></div>
+
+            <div class="auth-showcase-header">
+                <a class="auth-brand-link" href="index.html">
+                    <div class="brand-icon">P</div>
+                    <span>PIXEL CART</span>
+                </a>
+                <span class="auth-security-tag">MEMBER ENROLLMENT</span>
+            </div>
+
+            <div class="auth-showcase-composition">
+                <div class="auth-product-frame">
+                    <div class="auth-product-media">
+                        <img src="assets/products/pulse-headset.jpg" alt="Pulse Studio Gaming Headset" loading="eager"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1599669454699-248893623440?w=900';">
+                        <div class="auth-product-overlay" aria-hidden="true"></div>
+                    </div>
+                    <div class="auth-product-details">
+                        <div class="auth-product-meta">
+                            <span class="auth-product-tag">STUDIO ACOUSTICS // 2026</span>
+                            <span class="badge badge-success">VERIFIED STOCK</span>
+                        </div>
+                        <h3 class="auth-product-title">Pulse Low-Latency Headset</h3>
+                        <span class="auth-product-specs">50mm Neodymium • 2.4GHz Wireless • Detachable Mic</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="auth-showcase-footer">
+                <p>Build your persistent player profile. Track hardware shipments, write verified reviews, and secure
+                    pre-order drops.</p>
+            </div>
+        </div>
+
+        <!-- Right Side: Authentication Panel -->
+        <div class="auth-panel">
+            <div class="auth-panel-inner">
+                <div class="auth-panel-top">
+                    <a class="brand-link" href="index.html">
+                        <div class="brand-icon">P</div>
+                        <span>PIXEL CART</span>
+                    </a>
+                    <a class="auth-back-link" href="index.html">
+                        <span>← Back to store</span>
+                    </a>
+                </div>
+
+                <div class="auth-heading-group">
+                    <span class="auth-subheading-tag">NEW REGISTRATION</span>
+                    <h1 class="auth-title">Build your account.</h1>
+                    <p class="auth-desc">Keep your orders, reviews, and gear in one place.</p>
+                </div>
+
+                <form id="register-form" class="auth-form" novalidate>
+                    <div id="auth-alert" class="auth-alert" role="alert">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" class="auth-alert-icon">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="12" y1="8" x2="12" y2="12" />
+                            <line x1="12" y1="16" x2="12.01" y2="16" />
+                        </svg>
+                        <span id="message"></span>
+                    </div>
+
+                    <div class="auth-field">
+                        <label class="auth-label" for="reg-name">Full Name / Gamer Tag</label>
+                        <div class="auth-input-wrap">
+                            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <input id="reg-name" name="name" type="text" class="auth-input"
+                                placeholder="e.g. Alex Mercer" autocomplete="name" required>
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label class="auth-label" for="reg-email">Email Address</label>
+                        <div class="auth-input-wrap">
+                            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>
+                            <input id="reg-email" name="email" type="email" class="auth-input"
+                                placeholder="example@gmail.com" autocomplete="email" required>
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label class="auth-label" for="reg-password">Password</label>
+                        <div class="auth-input-wrap">
+                            <svg class="auth-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            <input id="reg-password" name="password" type="password" class="auth-input"
+                                placeholder="At least 6 characters" autocomplete="new-password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="auth-submit-btn">
+                        <span>Create Account</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="auth-switch-box">
+                    <span>Already have an account?</span>
+                    <a href="login.html">Sign in</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+
+</html>
