@@ -40,7 +40,7 @@ Assignment-specific vulnerable behavior is isolated to its named endpoints as re
 
 ## Team
 
-- Track: Web Application Security
+- Track: Bug Bounty
 - Project Name: Pixel Cart
 
 | Name | Responsibility |
