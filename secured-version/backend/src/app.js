@@ -16,15 +16,21 @@ const PORT = process.env.PORT || 3000;
 
 
 export const bootstrap = async () => {
+    // Only these origins are allowed to make credentialed cross-origin requests
+    const ALLOWED_ORIGINS = [
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:5173",
+        "http://localhost:5173"
+    ];
+
     // CORS middleware to support local frontend preview servers (e.g. Live Server, Vite, etc.)
     app.use((req, res, next) => {
         const origin = req.headers.origin;
-        if (origin) {
+        if (origin && ALLOWED_ORIGINS.includes(origin)) {
             res.setHeader("Access-Control-Allow-Origin", origin);
             res.setHeader("Access-Control-Allow-Credentials", "true");
             res.setHeader("Vary", "Origin");
-        } else {
-            res.setHeader("Access-Control-Allow-Origin", "*");
         }
         res.setHeader(
             "Access-Control-Allow-Methods",
@@ -49,16 +55,15 @@ export const bootstrap = async () => {
 
     // Session management
     app.use(session({
-        secret: process.env.SESSION_SECRET ?? "development-secret",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            httpOnly: true,
-            secure: false,
-            // Intentionally allows cross-site authenticated requests for the CSRF lab.
-            sameSite: false
-        }
-    }));
+    secret: process.env.SESSION_SECRET ?? "development-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: false,     // set true once you're on HTTPS
+        sameSite: "strict" // or "lax" if you need top-level nav links to keep the session
+    }
+}));
 
     // Template engine setup for invoices
     app.set("view engine", "ejs");
