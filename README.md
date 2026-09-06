@@ -1,115 +1,81 @@
-# Pixel Cart — Bug Bounty Project
+# Pixel Cart
 
-## Project Idea
+Pixel Cart is a full-stack gaming store for games, consoles, and accessories, built for the **Web Application Security — Final Project**. The repository contains two parallel versions of the same application:
 
-Pixel Cart is an e-commerce web application for a gaming store (games, consoles, and accessories). The project was built in two parallel versions to demonstrate practical web application security concepts:
+- `vulnerable-version/` — intentionally contains the vulnerabilities covered in the track.
+- `secured-version/` — same features and functionality, with every vulnerability properly fixed.
 
-1. **Vulnerable Version** — intentionally contains 9 common web vulnerabilities covered during the training, each connected to a realistic feature of the store (search, reviews, invoices, login, admin tools, file downloads).
-2. **Secured Version** — the exact same store, with the same features and functionality, but with all 9 vulnerabilities properly identified and fixed.
-
-The goal is to show, side by side, how each vulnerability works and how it can be correctly prevented — not just to build a working online store.
-
-*(Technical stack: Express backend, MySQL via `mysql2`, EJS for invoice generation, and a Vanilla HTML/CSS/JavaScript frontend.)*
-
+Both are Express + MySQL (`mysql2`) backends with EJS-rendered invoices and a vanilla HTML/CSS/JavaScript frontend, structured as router → controller → database (no separate service/repository layer).
 
 ## Team
 
 - Track: Bug Bounty
 - Project Name: Pixel Cart
 
-| Name | Responsibility |
-|---|---|
-| Kamal Ibrahim | Built the vulnerable version of the web application (all vulnerability sinks) |
-| Hana Hassan | Fixed SQL Injection, Stored XSS, SSTI, Open Redirect, Information Disclosure |
-| Haidy Abdelkareem | Set up the project copy and GitHub repository structure; Fixed SSRF and CSRF |
-| Nouran Ghopashy | Fixed Path Traversal |
-| Nada Mahrous | Fixed OS Command Injection |
-
-## Project Structure
-
-```text
-pixel-cart-BugBounty-Project/
-├── vulnerable-version/   -> intentionally contains all 9 vulnerabilities
-└── secured-version/      -> same application, all 9 vulnerabilities fixed
+```
+| # | Name              | Responsibility |
+|---|-------------------|-----------------|
+| 1 | Kamal Ibrahim     | Built the core web application; implemented SQL Injection, Stored XSS, OS Command Injection, SSTI, and CSRF in the vulnerable version. |
+| 2 | Haidy Abdelkareem | Implemented Path Traversal, SSRF, Open Redirect, Information Disclosure in the vulnerable version, And the SSRF fix in the secured version. |
+| 3 | Hana Hassan       | Implemented the SQL Injection, Stored XSS, SSTI, Open Redirect, and Information Disclosure fixes in the secured version. |
+| 4 | Nada Mahrous      | Implemented the OS Command Injection and CSRF fixes in the secured version. |
+| 5 | Nouran Muhammad   | Set up the GitHub repository structure and organization (including the README); implemented the Path Traversal fix in the secured version. |
 ```
 
-## Setup / How to Run
+## Setup / How to Run the Project
 
-Both versions run the same way. Configure `backend/.env` for the local MySQL instance, then run:
+Each version has its own `backend/` and is run independently. From either `vulnerable-version/backend` or `secured-version/backend`:
 
 ```text
-cd vulnerable-version/backend    (or secured-version/backend)
+cd backend
 npm install
 npm run db:setup
 npm start
 ```
 
-Open `http://localhost:3000`, or the port configured in `.env`. The frontend is served by Express.
+Configure `backend/.env` first (no `.env.example` is committed — create one with at least `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `PORT`, `SESSION_SECRET`). Both versions default to the same database name (`gaming_store`) and port (`3000`), so if you want to run both versions side by side, point them at different databases and/or ports in each `.env`.
+
+## Accounts
+
+After running the database setup, register a new account through the application's registration page before using the application.
 
 ## Requirements / Libraries
 
 - Node.js (v18+ recommended)
 - MySQL (local instance)
 
-Backend dependencies (installed automatically via `npm install`):
-
-| Package | Purpose |
-|---|---|
-| express | Web server / routing |
-| mysql2 | MySQL database driver |
-| express-session | Session-based authentication |
-| cookie-parser | Parsing cookies |
-| bcrypt | Password hashing |
-| ejs | Server-side template engine (invoices) |
-| axios | Outbound HTTP requests (admin image fetch) |
-| multer | Product image upload handling |
-| dotenv | Loading `.env` configuration |
-| nodemon | Auto-restart server during development |
-
-No frontend build step or package manager is required — the frontend is static HTML/CSS/vanilla JavaScript served directly by Express.
+Open `http://localhost:3000` (or the port configured in `.env`) — the frontend is served by Express.
 
 ## Database
 
-Schema files are in `backend/database/migrations`, seed data is in `backend/database/seeds/seed.sql`, and setup is explicit through `npm run db:setup`. The application never changes schema during startup.
+Schema files are located in `backend/database/migrations`, and development seed data is stored in `backend/database/seeds/seed.sql`.
 
-Demo accounts use password `password`: `demo@example.com` and admin `admin@example.com`.
+The database setup is explicit and must be run before starting the application:npm run db:setup
 
 ## API
 
-Authentication: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`.
+Authentication: `POST /api/auth/register`, `POST /api/auth/login` (accepts an optional `?next=` redirect target), `POST /api/auth/logout`, `GET /api/auth/me`.
 
-Products: `GET /api/products`, `GET /api/products/:id`, `POST|PUT|DELETE /api/products`, and `GET|POST /api/products/:id/reviews`.
+Products: `GET /api/products` (search/category/price/sort/pagination via query params), `GET /api/products/:id`, `GET /api/products/download?file=`, `POST|PUT|DELETE /api/products` (admin only), `GET|POST /api/products/:id/reviews`.
 
-Commerce: `GET|POST /api/cart`, `PUT|DELETE /api/cart/:productId`, `POST /api/orders`, `GET /api/orders`, and `GET /api/orders/:id`.
+Commerce: `GET|POST /api/cart`, `PUT|DELETE /api/cart/:productId`, `POST /api/orders`, `GET /api/orders`, `GET /api/orders/:id`.
 
-Users: `GET /api/users/profile` and `GET /api/users/invoice`.
+Users: `GET /api/users/profile`, `POST /api/users/profile` (update name/email), `GET /api/users/invoice?orderId=&name=`, `POST /api/users/avatar/import`, `POST /api/users/network-diagnostics`.
 
-Admin: `GET /api/admin/stats`, `GET /api/admin/users`, `GET /api/admin/orders`, `PATCH /api/admin/orders/:id`, `POST /api/admin/image`, and `POST /api/admin/ping`.
+Admin: `GET /api/admin/stats`, `GET /api/admin/users`, `GET /api/admin/orders`, `PATCH /api/admin/orders/:id`.
 
-The backend is organized as router -> controller -> service -> repository -> database. The frontend keeps page logic in separate files under `frontend/js`, with `api.js` as the shared Fetch layer.
+Assignment-specific vulnerable/secured behavior is isolated to its named endpoints as required by the academic exercise.
 
-## Vulnerabilities Implemented (vulnerable-version)
+## Vulnerabilities Implemented (vulnerable-version) → Fix Applied (secured-version)
 
-1. SQL Injection — `GET /api/products?search=`
-2. Stored XSS — product review content
-3. Server-Side Template Injection (SSTI) — invoice generation
-4. Open Redirect — `GET /api/auth/login?next=`
-5. Information Disclosure — stack traces returned in error responses
-6. OS Command Injection — `POST /api/admin/ping`
-7. Server-Side Request Forgery (SSRF) — `POST /api/admin/image`
-8. Path Traversal — `GET /api/products/download?file=`
-9. Cross-Site Request Forgery (CSRF) — session cookie + permissive CORS
+1. **SQL Injection** — `GET /api/products?search=` (also the `category` filter) → parameterized queries.
+2. **Stored XSS** — product review content, rendered via `innerHTML` on the product page → rendered as `textContent`.
+3. **Server-Side Template Injection (SSTI)** — `GET /api/users/invoice?name=`, raw value spliced into EJS source before rendering → passed as a template data variable and auto-escaped.
+4. **Path Traversal** — `GET /api/products/download?file=` → filename resolved with `path.basename` and confined to the uploads directory.
+5. **Cross-Site Request Forgery (CSRF)** — session cookie with `sameSite: false` + credentialed CORS reflecting any origin, affecting `POST /api/cart` and `POST /api/users/profile` → `sameSite: "strict"` cookie, an explicit CORS origin allowlist, and a synchronizer CSRF token required on `POST /api/users/profile`.
+6. **Server-Side Request Forgery (SSRF)** — `POST /api/users/avatar/import` (`req.body.url` fetched via Axios with no restrictions) → scheme/hostname validated against loopback/private/link-local ranges before fetching, with redirects disabled.
+7. **OS Command Injection** — `POST /api/users/network-diagnostics` (`req.body.host` concatenated into a shell `ping` command) → strict hostname/IP validation plus `execFile` (no shell).
+8. **Open Redirect** — `POST /api/auth/login?next=` → only same-site relative paths are honored.
+9. **Information Disclosure** — global error handler returned the full stack trace in the JSON response → stack trace logged server-side only; response no longer includes it.
 
-## Security Fixes Applied (secured-version)
-
-| Vulnerability | Fix Applied |
-|---|---|
-| SQL Injection | Parameterized query (`LIKE ?`) instead of string concatenation |
-| Stored XSS | `textContent` instead of `innerHTML` when rendering reviews |
-| SSTI | User input passed as EJS data variable, not spliced into template source |
-| Open Redirect | `next` param validated to be a relative path only |
-| Information Disclosure | Stack traces logged server-side only, never sent to client |
-| OS Command Injection | `execFile` with argument array + IP allowlist regex, no shell |
-| Server-Side Request Forgery (SSRF) | URL scheme + private/loopback IP checks, redirects disabled |
-| Path Traversal | `path.basename()` strips directory traversal, path containment check |
-| Cross-Site Request Forgery (CSRF) | Session cookie `SameSite: strict`, CORS restricted to origin allowlist |
+> Note: vulnerabilities 6 and 7 live under `/api/users/...` (profile page), not under `/api/admin/...` — worth double-checking against whatever vulnerability list your course gave you, in case the naming differs from what's expected.
