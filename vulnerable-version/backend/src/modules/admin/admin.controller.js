@@ -1,5 +1,3 @@
-import axios from "axios";
-import child_process from "child_process";
 import { pool } from "../../DB/DBConnection.js";
 
 export const getStatistics = async (req, res, next) => {
@@ -49,21 +47,3 @@ export const updateOrderStatus = async (req, res, next) => {
     }
 };
 
-export const fetchImage = async (req, res, next) => {
-    try {
-        // Intentionally vulnerable to SSRF: directly fetches user-supplied URL with Axios
-        const response = await axios.get(req.body.url, { responseType: "arraybuffer" });
-        res.type(response.headers["content-type"] || "application/octet-stream").send(response.data);
-    } catch (error) {
-        next(error);
-    }
-};
-
-export const ping = (req, res, next) => {
-    // Intentionally vulnerable to OS Command Injection: concatenates user input directly into system command
-    const pingCountFlag = process.platform === "win32" ? "-n" : "-c";
-    child_process.exec("ping " + pingCountFlag + " 2 " + req.body.ip, (err, stdout) => {
-        if (err) return next(err);
-        res.type("text/plain").send(stdout);
-    });
-};

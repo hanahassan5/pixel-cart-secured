@@ -163,7 +163,12 @@ async function setupHeaderAndAuth() {
             }
         }
     } catch {
-        // Unauthenticated
+        // Unauthenticated: send the player to sign in, remembering where they were
+        const authLink = document.querySelector("#nav-auth-link");
+        if (authLink) {
+            const currentPage = window.location.pathname.split("/").pop() || "index.html";
+            authLink.href = `login.html?next=${encodeURIComponent(currentPage + window.location.search)}`;
+        }
     }
 
     updateCartBadge();

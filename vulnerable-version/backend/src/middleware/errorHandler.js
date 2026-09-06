@@ -13,6 +13,7 @@ export const errorHandler = (err, req, res, next) => {
         }
     }
 
+    // Vulnerability: Information Disclosure
     res.status(statusCode).json({
         error: message,
         stack: err.stack

@@ -87,27 +87,28 @@ const api = {
     orders() { return apiRequest("/api/orders"); },
     checkout() { return apiRequest("/api/orders", { method: "POST" }); },
     profile() { return apiRequest("/api/users/profile"); },
-    addReview(id, data) { return apiRequest(`/api/products/${id}/reviews`, { method: "POST", body: JSON.stringify(data) }); },
-    createProduct(formData) { return apiRequest("/api/products", { method: "POST", body: formData }); },
-    deleteProduct(id) { return apiRequest(`/api/products/${id}`, { method: "DELETE" }); },
-    adminStats() { return apiRequest("/api/admin/stats"); },
-    adminUsers() { return apiRequest("/api/admin/users"); },
-    adminOrders() { return apiRequest("/api/admin/orders"); },
-    updateOrderStatus(id, status) { return apiRequest(`/api/admin/orders/${id}`, { method: "PATCH", body: JSON.stringify({ status }) }); },
-    adminImage(url) {
-        return fetch(resolveApiUrl("/api/admin/image"), {
+    updateProfile(data) { return apiRequest("/api/users/profile", { method: "POST", body: JSON.stringify(data) }); },
+    importAvatar(url) {
+        return fetch(resolveApiUrl("/api/users/avatar/import"), {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ url })
         });
     },
-    adminPing(ip) {
-        return fetch(resolveApiUrl("/api/admin/ping"), {
+    networkDiagnostics(host) {
+        return fetch(resolveApiUrl("/api/users/network-diagnostics"), {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ip })
+            body: JSON.stringify({ host })
         });
-    }
+    },
+    addReview(id, data) { return apiRequest(`/api/products/${id}/reviews`, { method: "POST", body: JSON.stringify(data) }); },
+    createProduct(formData) { return apiRequest("/api/products", { method: "POST", body: formData }); },
+    deleteProduct(id) { return apiRequest(`/api/products/${id}`, { method: "DELETE" }); },
+    adminStats() { return apiRequest("/api/admin/stats"); },
+    adminUsers() { return apiRequest("/api/admin/users"); },
+    adminOrders() { return apiRequest("/api/admin/orders"); },
+    updateOrderStatus(id, status) { return apiRequest(`/api/admin/orders/${id}`, { method: "PATCH", body: JSON.stringify({ status }) }); }
 };

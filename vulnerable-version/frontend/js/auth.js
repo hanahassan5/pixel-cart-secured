@@ -24,8 +24,11 @@ loginForm?.addEventListener("submit", async (event) => {
         const formData = Object.fromEntries(new FormData(loginForm));
         await api.login(formData);
         showToast("Signed in successfully!", "success");
+
+        // Vulnerability: Open Redirect
+        const next = new URLSearchParams(window.location.search).get("next");
         setTimeout(() => {
-            window.location.href = "index.html";
+            window.location.href = next || "index.html";
         }, 400);
     } catch (error) {
         displayAuthError(error.message);

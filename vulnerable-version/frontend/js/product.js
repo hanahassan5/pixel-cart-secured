@@ -107,6 +107,10 @@ async function loadProductPage() {
                         <button id="buy-now-btn" class="btn btn-secondary btn-lg" style="flex: 1; min-width: 140px;">
                             <span>Buy Now</span>
                         </button>
+                        <button id="download-warranty-btn" class="btn btn-outline btn-lg" style="flex: 1; min-width: 220px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            <span>Download Warranty Card</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -155,6 +159,14 @@ async function loadProductPage() {
             } catch (err) {
                 showToast(err.message || "Failed to proceed to checkout", "error");
             }
+        });
+
+        // Download warranty card: opens the shared warranty document via the
+        // real file-download endpoint, passing the target filename as a
+        // normal query parameter.
+        document.querySelector("#download-warranty-btn")?.addEventListener("click", () => {
+            const url = resolveApiUrl(`/api/products/download?file=warranty-card.txt`);
+            window.open(url, "_blank");
         });
 
         // Load reviews
@@ -264,7 +276,7 @@ async function loadReviews() {
                     <div class="review-body"></div>
                 `;
 
-                // IMPORTANT: Preserves Stored XSS vulnerability required for security testing
+                // Vulnerability: Stored XSS
                 card.querySelector(".review-body").innerHTML = review.content;
                 reviewsContainer.appendChild(card);
             });

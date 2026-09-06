@@ -1,7 +1,5 @@
 import { Router } from "express";
 import {
-    fetchImage,
-    ping,
     getStatistics,
     listUsers,
     listOrders,
@@ -18,7 +16,5 @@ router.get("/stats", getStatistics);
 router.get("/users", listUsers);
 router.get("/orders", listOrders);
 router.patch("/orders/:id", updateOrderStatus);
-router.post("/image", fetchImage);
-router.post("/ping", ping);
 
 export default router;

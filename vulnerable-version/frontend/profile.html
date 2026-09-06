@@ -115,6 +115,60 @@
                             </a>
                         </div>
                     </div>
+
+                    <div class="review-form-panel">
+                        <h3 style="margin-bottom: 0.5rem;">Account Settings</h3>
+                        <p class="text-muted text-sm" style="margin-bottom: 0.75rem;">Update the display name and email address associated with your account.</p>
+                        <p id="account-current-email-banner" class="badge badge-primary" style="display: inline-flex; margin-bottom: 1.25rem; font-size: 0.85rem; padding: 0.4rem 0.75rem;">
+                            Email on file: <strong id="account-current-email" style="margin-left: 0.35rem;">—</strong>
+                        </p>
+
+                        <form id="account-settings-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div class="auth-field">
+                                <label class="auth-label" for="settings-name">Display Name</label>
+                                <input id="settings-name" name="name" type="text" class="auth-input" placeholder="Your name">
+                            </div>
+                            <div class="auth-field">
+                                <label class="auth-label" for="settings-email">Email Address</label>
+                                <input id="settings-email" name="email" type="email" class="auth-input" placeholder="you@example.com" required>
+                            </div>
+                            <button type="submit" id="settings-save-btn" class="btn btn-primary btn-sm" style="align-self: flex-start;">
+                                <span>Save Changes</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="review-form-panel">
+                        <h3 style="margin-bottom: 0.5rem;">Profile Picture</h3>
+                        <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Import an avatar directly from an image URL instead of uploading a file.</p>
+
+                        <form id="avatar-import-form" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
+                            <div class="auth-field" style="flex: 1; min-width: 220px; margin-bottom: 0;">
+                                <label class="auth-label" for="avatar-url">Image URL</label>
+                                <input id="avatar-url" name="url" type="text" class="auth-input" placeholder="https://example.com/avatar.jpg" required>
+                            </div>
+                            <button type="submit" id="avatar-import-btn" class="btn btn-secondary btn-sm">
+                                <span>Import</span>
+                            </button>
+                        </form>
+                        <img id="avatar-preview" alt="Imported avatar preview" style="display:none; margin-top: 1rem; max-width: 120px; border-radius: 8px;">
+                    </div>
+
+                    <div class="review-form-panel">
+                        <h3 style="margin-bottom: 0.5rem;">Network Diagnostics</h3>
+                        <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Check whether a game server or host is reachable from Pixel Cart's network.</p>
+
+                        <form id="network-diagnostics-form" style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end;">
+                            <div class="auth-field" style="flex: 1; min-width: 220px; margin-bottom: 0;">
+                                <label class="auth-label" for="diagnostics-host">Host or IP Address</label>
+                                <input id="diagnostics-host" name="host" type="text" class="auth-input" placeholder="127.0.0.1" required>
+                            </div>
+                            <button type="submit" id="diagnostics-run-btn" class="btn btn-secondary btn-sm">
+                                <span>Run Diagnostic</span>
+                            </button>
+                        </form>
+                        <pre id="diagnostics-result" class="mono text-sm" style="display:none; margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.25); border-radius: 8px; white-space: pre-wrap;"></pre>
+                    </div>
                 </div>
             </div>
         </div>

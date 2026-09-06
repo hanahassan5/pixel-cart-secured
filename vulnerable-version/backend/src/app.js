@@ -55,7 +55,7 @@ export const bootstrap = async () => {
         cookie: {
             httpOnly: true,
             secure: false,
-            // Intentionally allows cross-site authenticated requests for the CSRF lab.
+            // Vulnerability: CSRF
             sameSite: false
         }
     }));
@@ -83,7 +83,7 @@ export const bootstrap = async () => {
         next(new AppError(`Invalid URL: ${req.originalUrl}`, 404));
     });
 
-    // Centralized global error handler (Information Disclosure preserved)
+    // Centralized global error handler
     app.use(errorHandler);
 
     // Database connection check before server startup

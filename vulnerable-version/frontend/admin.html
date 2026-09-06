@@ -42,7 +42,6 @@
                 <button type="button" class="admin-tab-btn active" data-tab="overview">Overview & Stats</button>
                 <button type="button" class="admin-tab-btn" data-tab="products">Products Manager</button>
                 <button type="button" class="admin-tab-btn" data-tab="orders">Orders Manager</button>
-                <button type="button" class="admin-tab-btn" data-tab="security">Security Lab Tools</button>
             </div>
 
             <!-- TAB 1: OVERVIEW & STATS -->
@@ -92,58 +91,6 @@
                     <h3>Fulfillment & Status Control</h3>
                 </div>
                 <div id="admin-orders-table"></div>
-            </section>
-
-            <!-- TAB 4: SECURITY TOOLS (SSRF & COMMAND INJECTION) -->
-            <section id="tab-security" class="admin-tab-content" style="display: none;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2rem;">
-                    <!-- SSRF Form -->
-                    <div class="review-form-panel">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                            <span class="badge badge-warning">SSRF TARGET</span>
-                            <h3>External Asset Fetcher</h3>
-                        </div>
-                        <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Fetches external digital cover images directly from remote web servers via backend Axios.</p>
-
-                        <form id="image-form">
-                            <div class="form-group">
-                                <label class="form-label" for="fetch-url">Remote Image URL</label>
-                                <input id="fetch-url" name="url" class="form-control" placeholder="http://127.0.0.1:3000/..." required>
-                            </div>
-                            <button type="submit" id="fetch-btn" class="btn btn-secondary btn-block">
-                                <span>Fetch Remote Resource</span>
-                            </button>
-                        </form>
-                        
-                        <div style="margin-top: 1.25rem;">
-                            <img id="image-result" style="display: none; max-width: 100%; border-radius: 8px; border: 1px solid var(--border-default);" alt="Fetched Preview">
-                        </div>
-                    </div>
-
-                    <!-- Command Injection Form -->
-                    <div class="review-form-panel">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                            <span class="badge badge-danger">CMD INJECTION TARGET</span>
-                            <h3>Network Diagnostic Ping</h3>
-                        </div>
-                        <p class="text-muted text-sm" style="margin-bottom: 1.25rem;">Executes system ping utility to diagnose connectivity with remote game server endpoints.</p>
-
-                        <form id="ping-form">
-                            <div class="form-group">
-                                <label class="form-label" for="ping-ip">Destination Host or IP</label>
-                                <input id="ping-ip" name="ip" class="form-control" placeholder="127.0.0.1" required>
-                            </div>
-                            <button type="submit" id="ping-btn" class="btn btn-secondary btn-block">
-                                <span>Run Ping Diagnostic</span>
-                            </button>
-                        </form>
-
-                        <div style="margin-top: 1.25rem;">
-                            <div class="form-label">Diagnostic Output:</div>
-                            <pre id="ping-result" class="admin-terminal">Waiting for execution...</pre>
-                        </div>
-                    </div>
-                </div>
             </section>
         </div>
     </main>

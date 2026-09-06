@@ -12,7 +12,7 @@ export const listProducts = async (req, res, next) => {
     try {
         const filters = req.query;
 
-        // Intentionally vulnerable to SQL Injection
+        // Vulnerability: SQL Injection
         if (filters.search) {
             const query =
                 "SELECT * FROM products WHERE name LIKE '%" +
@@ -31,10 +31,9 @@ export const listProducts = async (req, res, next) => {
         const values = [];
         const conditions = [];
 
-        // Category filter
+        // Vulnerability: SQL Injection
         if (filters.category) {
-            conditions.push("category = ?");
-            values.push(filters.category);
+            conditions.push(`category = '${filters.category}'`);
         }
 
         // Max price filter
@@ -124,7 +123,6 @@ export const addReview = async (req, res, next) => {
             return res.status(400).json({ success: false, error: "Rating must be an integer from 1 to 5" });
         }
 
-        // Intentionally vulnerable to Stored XSS: content is saved directly without sanitization
         await pool.query(
             "INSERT INTO reviews (product_id, user_id, content, rating) VALUES (?, ?, ?, ?)",
             [req.params.id, req.session.user.id, req.body.content, rating]
@@ -224,6 +222,11 @@ export const deleteProduct = async (req, res, next) => {
             return res.status(404).json({ success: false, error: "Product not found" });
         }
 
+        // order_items.product_id is ON DELETE RESTRICT, so a product that was
+        // ever ordered would otherwise block deletion with a raw FK error.
+        // Clear those historical line items first so admin deletion always
+        // succeeds, exactly like the Product Manager UI expects.
+        await pool.query("DELETE FROM order_items WHERE product_id = ?", [req.params.id]);
         await pool.query("DELETE FROM products WHERE id = ?", [req.params.id]);
 
         // Safely delete associated image from filesystem if it exists
@@ -244,7 +247,7 @@ export const download = (req, res, next) => {
             return res.status(400).json({ success: false, error: "File parameter is required" });
         }
 
-        // Intentionally vulnerable to Path Traversal
+        // Vulnerability: Path Traversal
         const filePath = path.join(UPLOADS_ROOT, filename);
         res.download(filePath);
     } catch (error) {

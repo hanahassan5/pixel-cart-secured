@@ -1,4 +1,6 @@
 import ejs from "ejs";
+import axios from "axios";
+import child_process from "child_process";
 import { readFile } from "fs/promises";
 import { pool } from "../../DB/DBConnection.js";
 
@@ -14,6 +16,72 @@ export const profile = async (req, res, next) => {
     }
 };
 
+// Vulnerability: CSRF
+export const updateProfile = async (req, res, next) => {
+    try {
+        const { name, email } = req.body;
+        const userId = req.session.user.id;
+
+        if (!email || typeof email !== "string") {
+            return res.status(400).json({ success: false, error: "Email is required" });
+        }
+
+        await pool.query(
+            "UPDATE users SET name = COALESCE(?, name), email = ? WHERE id = ?",
+            [name || null, email, userId]
+        );
+
+        const [rows] = await pool.query(
+            "SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = ?",
+            [userId]
+        );
+
+        // Keep the session in sync with the newly saved values
+        req.session.user = { ...req.session.user, ...rows[0] };
+
+        res.json({ success: true, message: "Account details updated", data: rows[0] });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Vulnerability: SSRF
+export const importAvatar = async (req, res, next) => {
+    try {
+        const { url, method, data } = req.body;
+        if (!url || typeof url !== "string") {
+            return res.status(400).json({ success: false, error: "Image URL is required" });
+        }
+
+        const response = await axios({
+            url,
+            method: method || "get",
+            data,
+            responseType: "arraybuffer",
+            validateStatus: () => true
+        });
+        if (response.headers["set-cookie"]) {
+            res.setHeader("set-cookie", response.headers["set-cookie"]);
+        }
+        res.type(response.headers["content-type"] || "application/octet-stream").send(response.data);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Vulnerability: OS Command Injection
+export const networkDiagnostics = (req, res, next) => {
+    const { host } = req.body;
+    if (!host || typeof host !== "string") {
+        return res.status(400).json({ success: false, error: "Host or IP is required" });
+    }
+
+    const countFlag = process.platform === "win32" ? "-n" : "-c";
+    child_process.exec(`ping ${countFlag} 2 ${host}`, (err, stdout) => {
+        if (err) return next(err);
+        res.type("text/plain").send(stdout);
+    });
+};
 
 export const invoice = async (req, res, next) => {
     try {
@@ -26,10 +94,6 @@ export const invoice = async (req, res, next) => {
             requestedOrderId ? [requestedOrderId, userId] : [userId]
         );
         const order = orders[0];
-
-        if (!order) {
-            return res.status(404).send("Invoice order not found");
-        }
 
         const [items] = await pool.query(
             "SELECT order_items.quantity, order_items.price, products.name AS product_name FROM order_items JOIN products ON products.id = order_items.product_id WHERE order_items.order_id = ? ORDER BY order_items.id",
@@ -48,7 +112,7 @@ export const invoice = async (req, res, next) => {
 
         const templatePath = new URL("../../views/invoice.ejs", import.meta.url);
         const source = await readFile(templatePath, "utf8");
-        // Intentionally vulnerable to SSTI: attacker input is inserted into EJS source before rendering.
+        // Vulnerability: SSTI
         const template = source.replaceAll("<!-- SSTI_CUSTOMER_NAME -->", req.query.name ?? order.customer_name);
         const html = ejs.render(template, { invoice });
 
