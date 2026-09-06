@@ -10,6 +10,20 @@ function displayAuthError(message) {
     }
 }
 
+// Fixed: Open Redirect
+function isSafeNextPath(value) {
+    if (!value || typeof value !== "string") return false;
+    if (value.startsWith("//")) return false;
+    if (value.startsWith("\\") || value.includes("\\")) return false;
+    if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(value)) return false;
+    return true;
+}
+
+function safeNextOrDefault(fallback = "index.html") {
+    const next = new URLSearchParams(window.location.search).get("next");
+    return isSafeNextPath(next) ? next : fallback;
+}
+
 loginForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const alertBox = document.querySelector("#auth-alert");
@@ -24,8 +38,9 @@ loginForm?.addEventListener("submit", async (event) => {
         const formData = Object.fromEntries(new FormData(loginForm));
         await api.login(formData);
         showToast("Signed in successfully!", "success");
+        const destination = safeNextOrDefault("index.html");
         setTimeout(() => {
-            window.location.href = "index.html";
+            window.location.href = destination;
         }, 400);
     } catch (error) {
         displayAuthError(error.message);

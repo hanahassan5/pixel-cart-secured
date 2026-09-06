@@ -12,7 +12,7 @@ export const listProducts = async (req, res, next) => {
     try {
         const filters = req.query;
 
-        // Intentionally vulnerable to SQL Injection
+        // Fixed: SQL Injection
         if (filters.search) {
             const query = "SELECT * FROM products WHERE name LIKE ?";
             const searchValue = `%${filters.search}%`;
@@ -29,10 +29,20 @@ export const listProducts = async (req, res, next) => {
         const values = [];
         const conditions = [];
 
-        // Category filter
+        // Fixed: SQL Injection
         if (filters.category) {
+            const category = String(filters.category).trim();
+            const isValidCategory = /^[A-Za-z0-9 -]{1,50}$/.test(category);
+
+            if (!isValidCategory) {
+                return res.status(400).json({
+                    success: false,
+                    error: "Invalid category filter"
+                });
+            }
+
             conditions.push("category = ?");
-            values.push(filters.category);
+            values.push(category);
         }
 
         // Max price filter
@@ -122,7 +132,6 @@ export const addReview = async (req, res, next) => {
             return res.status(400).json({ success: false, error: "Rating must be an integer from 1 to 5" });
         }
 
-        // Intentionally vulnerable to Stored XSS: content is saved directly without sanitization
         await pool.query(
             "INSERT INTO reviews (product_id, user_id, content, rating) VALUES (?, ?, ?, ?)",
             [req.params.id, req.session.user.id, req.body.content, rating]
@@ -242,11 +251,10 @@ export const download = (req, res, next) => {
             return res.status(400).json({ success: false, error: "File parameter is required" });
         }
 
-        // Strip any directory components — only a bare filename is allowed
+        // Fixed: Path Traversal
         const safeName = path.basename(filename);
         const filePath = path.join(UPLOADS_ROOT, safeName);
 
-        // Belt-and-braces: confirm the resolved path is still inside UPLOADS_ROOT
         if (!filePath.startsWith(path.resolve(UPLOADS_ROOT) + path.sep)) {
             return res.status(400).json({ success: false, error: "Invalid file path" });
         }

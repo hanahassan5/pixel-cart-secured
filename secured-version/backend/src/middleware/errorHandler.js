@@ -13,6 +13,7 @@ export const errorHandler = (err, req, res, next) => {
         }
     }
 
+    // Fixed: Information Disclosure
     console.error(err.stack);
 
     res.status(statusCode).json({

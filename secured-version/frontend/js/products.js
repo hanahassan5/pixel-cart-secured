@@ -14,7 +14,13 @@ function syncFormWithUrl() {
         searchInput.value = urlParams.get("search");
     }
     if (categorySelect && urlParams.has("category")) {
-        categorySelect.value = urlParams.get("category");
+        const category = urlParams.get("category");
+        categorySelect.value = category;
+
+        // Keep an unknown URL value from silently becoming "all categories".
+        if (categorySelect.value !== category) {
+            categorySelect.dataset.urlCategory = category;
+        }
     }
     if (sortSelect && urlParams.has("sort")) {
         sortSelect.value = urlParams.get("sort");
@@ -32,6 +38,12 @@ async function loadProducts() {
         if (val && String(val).trim()) {
             params.append(key, String(val).trim());
         }
+    }
+
+    const categorySelect = document.querySelector("#filter-category");
+    const retainedCategory = categorySelect?.dataset.urlCategory;
+    if (!params.has("category") && retainedCategory) {
+        params.append("category", retainedCategory);
     }
 
     try {
@@ -82,6 +94,10 @@ filterForm?.addEventListener("submit", (event) => {
 });
 
 resetBtn?.addEventListener("click", resetFilters);
+
+document.querySelector("#filter-category")?.addEventListener("change", (event) => {
+    delete event.currentTarget.dataset.urlCategory;
+});
 
 syncFormWithUrl();
 loadProducts();

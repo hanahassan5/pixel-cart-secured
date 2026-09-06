@@ -50,6 +50,10 @@ async function initCheckout() {
             }).join("");
         }
     } catch (err) {
+        if (err.message && err.message.toLowerCase().includes("authentication")) {
+            window.location.href = "login.html?next=checkout.html";
+            return;
+        }
         if (checkoutAlert && checkoutMessage) {
             checkoutAlert.style.display = "flex";
             checkoutMessage.textContent = "Unable to load cart preview. Please try again.";

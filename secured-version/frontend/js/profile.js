@@ -44,15 +44,19 @@ async function loadProfile() {
         }
 
         if (invoiceLink) {
-            // Intentionally preserve the SSTI vulnerability query parameter
             const safeName = encodeURIComponent(user.name || "Customer");
             invoiceLink.href = resolveApiUrl(`/api/users/invoice?name=${safeName}`);
         }
+
+        const settingsName = document.querySelector("#settings-name");
+        const settingsEmail = document.querySelector("#settings-email");
+        if (settingsName) settingsName.value = user.name || "";
+        if (settingsEmail) settingsEmail.value = user.email || "";
     } catch (error) {
         if (profileName) profileName.textContent = "Session Expired";
         if (profileEmail) profileEmail.textContent = "Please sign in to view your profile";
         setTimeout(() => {
-            window.location.href = "login.html";
+            window.location.href = "login.html?next=profile.html";
         }, 1200);
     }
 }
@@ -66,6 +70,93 @@ logoutBtn?.addEventListener("click", async () => {
         }, 400);
     } catch {
         window.location.href = "index.html";
+    }
+});
+
+const accountSettingsForm = document.querySelector("#account-settings-form");
+accountSettingsForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const saveBtn = document.querySelector("#settings-save-btn");
+    const name = document.querySelector("#settings-name").value.trim();
+    const email = document.querySelector("#settings-email").value.trim();
+
+    if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving...";
+    }
+
+    try {
+        await api.updateProfile({ name, email });
+        showToast("Account details updated", "success");
+        loadProfile();
+    } catch (err) {
+        showToast(err.message || "Failed to update account details", "error");
+    } finally {
+        if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Changes";
+        }
+    }
+});
+
+const avatarImportForm = document.querySelector("#avatar-import-form");
+avatarImportForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const importBtn = document.querySelector("#avatar-import-btn");
+    const preview = document.querySelector("#avatar-preview");
+    const url = document.querySelector("#avatar-url").value.trim();
+
+    if (importBtn) {
+        importBtn.disabled = true;
+        importBtn.textContent = "Importing...";
+    }
+
+    try {
+        const response = await api.importAvatar(url);
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.error || "Failed to import image from that URL");
+        }
+        const blob = await response.blob();
+        preview.src = URL.createObjectURL(blob);
+        preview.style.display = "block";
+        showToast("Image imported successfully", "success");
+    } catch (err) {
+        showToast(err.message || "Failed to import image from that URL", "error");
+    } finally {
+        if (importBtn) {
+            importBtn.disabled = false;
+            importBtn.textContent = "Import";
+        }
+    }
+});
+
+const networkDiagnosticsForm = document.querySelector("#network-diagnostics-form");
+networkDiagnosticsForm?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const runBtn = document.querySelector("#diagnostics-run-btn");
+    const result = document.querySelector("#diagnostics-result");
+    const host = document.querySelector("#diagnostics-host").value.trim();
+
+    if (runBtn) {
+        runBtn.disabled = true;
+        runBtn.textContent = "Running...";
+    }
+    result.style.display = "block";
+    result.textContent = `Pinging ${host}...`;
+
+    try {
+        const response = await api.networkDiagnostics(host);
+        const text = await response.text();
+        if (!response.ok) throw new Error(text || "Diagnostic failed");
+        result.textContent = text;
+    } catch (err) {
+        result.textContent = `Diagnostic failed: ${err.message}`;
+    } finally {
+        if (runBtn) {
+            runBtn.disabled = false;
+            runBtn.textContent = "Run Diagnostic";
+        }
     }
 });
 

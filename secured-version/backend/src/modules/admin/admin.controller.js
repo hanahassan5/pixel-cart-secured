@@ -1,5 +1,3 @@
-import axios from "axios";
-import child_process from "child_process";
 import { pool } from "../../DB/DBConnection.js";
 
 export const getStatistics = async (req, res, next) => {
@@ -49,64 +47,3 @@ export const updateOrderStatus = async (req, res, next) => {
     }
 };
 
-import { URL } from "url";
-import net from "net";
-
-const isPrivateOrLoopback = (hostname) => {
-    if (hostname === "localhost") return true;
-    if (net.isIP(hostname)) {
-        return (
-            hostname.startsWith("127.") ||
-            hostname.startsWith("10.") ||
-            hostname.startsWith("192.168.") ||
-            hostname.startsWith("169.254.") ||
-            /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname) ||
-            hostname === "::1"
-        );
-    }
-    return false;
-};
-
-export const fetchImage = async (req, res, next) => {
-    try {
-        let parsed;
-        try {
-            parsed = new URL(req.body.url);
-        } catch {
-            return res.status(400).json({ success: false, error: "Invalid URL" });
-        }
-
-        if (!["http:", "https:"].includes(parsed.protocol)) {
-            return res.status(400).json({ success: false, error: "Only http/https URLs are allowed" });
-        }
-        if (isPrivateOrLoopback(parsed.hostname)) {
-            return res.status(400).json({ success: false, error: "Requests to internal addresses are not allowed" });
-        }
-
-        const response = await axios.get(parsed.toString(), {
-            responseType: "arraybuffer",
-            maxRedirects: 0
-        });
-        res.type(response.headers["content-type"] || "application/octet-stream").send(response.data);
-    } catch (error) {
-        next(error);
-    }
-};
-
-import { execFile } from "child_process";
-
-const IP_REGEX = /^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$/;
-
-export const ping = (req, res, next) => {
-    const { ip } = req.body;
-
-    if (!ip || typeof ip !== "string" || !IP_REGEX.test(ip)) {
-        return res.status(400).json({ success: false, error: "Invalid IP address" });
-    }
-
-    const pingCountFlag = process.platform === "win32" ? "-n" : "-c";
-    execFile("ping", [pingCountFlag, "2", ip], (err, stdout) => {
-        if (err) return next(err);
-        res.type("text/plain").send(stdout);
-    });
-};

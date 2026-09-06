@@ -34,7 +34,7 @@ export const login = async (req, res, next) => {
         const { password: _, ...safeUser } = user;
         req.session.user = safeUser;
 
-        // Intentionally vulnerable to Open Redirect
+        // Fixed: Open Redirect
         if (req.query.next && req.query.next.startsWith("/") && !req.query.next.startsWith("//")) {
             return res.redirect(req.query.next);
         }

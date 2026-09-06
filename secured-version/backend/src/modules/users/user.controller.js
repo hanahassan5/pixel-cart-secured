@@ -1,6 +1,9 @@
 import ejs from "ejs";
+import axios from "axios";
+import { execFile } from "child_process";
 import { readFile } from "fs/promises";
 import { pool } from "../../DB/DBConnection.js";
+import { safeFetch } from "../../utils/ssrfGuard.js";
 
 export const profile = async (req, res, next) => {
     try {
@@ -14,6 +17,64 @@ export const profile = async (req, res, next) => {
     }
 };
 
+// Fixed: CSRF
+export const updateProfile = async (req, res, next) => {
+    try {
+        const { name, email } = req.body;
+        const userId = req.session.user.id;
+
+        if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ success: false, error: "A valid email is required" });
+        }
+
+        await pool.query(
+            "UPDATE users SET name = COALESCE(?, name), email = ? WHERE id = ?",
+            [name || null, email, userId]
+        );
+
+        const [rows] = await pool.query(
+            "SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = ?",
+            [userId]
+        );
+
+        req.session.user = { ...req.session.user, ...rows[0] };
+
+        res.json({ success: true, message: "Account details updated", data: rows[0] });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Fixed: SSRF
+export const importAvatar = async (req, res, next) => {
+    try {
+        const { url } = req.body;
+        if (!url || typeof url !== "string") {
+            return res.status(400).json({ success: false, error: "Image URL is required" });
+        }
+
+        const response = await safeFetch(url);
+        res.type(response.headers["content-type"] || "application/octet-stream").send(response.data);
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message || "Unable to import that image" });
+    }
+};
+
+// Fixed: OS Command Injection
+const HOSTNAME_PATTERN = /^[a-zA-Z0-9](?:[a-zA-Z0-9.-]{0,253}[a-zA-Z0-9])?$/;
+
+export const networkDiagnostics = (req, res, next) => {
+    const { host } = req.body;
+    if (!host || typeof host !== "string" || host.length > 255 || !HOSTNAME_PATTERN.test(host)) {
+        return res.status(400).json({ success: false, error: "Enter a valid hostname or IP address" });
+    }
+
+    const countFlag = process.platform === "win32" ? "-n" : "-c";
+    execFile("ping", [countFlag, "2", host], (err, stdout) => {
+        if (err && !stdout) return next(err);
+        res.type("text/plain").send(stdout || "No response");
+    });
+};
 
 export const invoice = async (req, res, next) => {
     try {
@@ -48,7 +109,7 @@ export const invoice = async (req, res, next) => {
 
         const templatePath = new URL("../../views/invoice.ejs", import.meta.url);
         const source = await readFile(templatePath, "utf8");
-        // Intentionally vulnerable to SSTI: attacker input is inserted into EJS source before rendering.
+        // Fixed: SSTI
         const customerName = req.query.name ?? order.customer_name;
         const html = ejs.render(source, { invoice, customerName });
         if (req.query.download === "1") {

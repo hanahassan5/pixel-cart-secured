@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { AppError } from "./middleware/appError.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import { ensureCsrfToken } from "./middleware/csrfMiddleware.js";
 import router from "./modules/index.js";
 import { testDatabaseConnection } from "./DB/DBConnection.js";
 
@@ -60,14 +61,18 @@ export const bootstrap = async () => {
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: false,     // set true once you're on HTTPS
-        sameSite: "strict" // or "lax" if you need top-level nav links to keep the session
+        secure: false,
+        // Fixed: CSRF
+        sameSite: "strict"
     }
 }));
 
     // Template engine setup for invoices
     app.set("view engine", "ejs");
     app.set("views", path.join(__dirname, "views"));
+
+    // Issue/refresh the CSRF token cookie for every request with a session
+    app.use(ensureCsrfToken);
 
     // API router (mounted before static middleware to ensure /api routes are never intercepted)
     app.use("/api", router);
@@ -88,7 +93,7 @@ export const bootstrap = async () => {
         next(new AppError(`Invalid URL: ${req.originalUrl}`, 404));
     });
 
-    // Centralized global error handler (Information Disclosure preserved)
+    // Centralized global error handler
     app.use(errorHandler);
 
     // Database connection check before server startup
