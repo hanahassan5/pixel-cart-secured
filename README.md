@@ -77,5 +77,3 @@ Assignment-specific vulnerable/secured behavior is isolated to its named endpoin
 7. **OS Command Injection** — `POST /api/users/network-diagnostics` (`req.body.host` concatenated into a shell `ping` command) → strict hostname/IP validation plus `execFile` (no shell).
 8. **Open Redirect** — `POST /api/auth/login?next=` → only same-site relative paths are honored.
 9. **Information Disclosure** — global error handler returned the full stack trace in the JSON response → stack trace logged server-side only; response no longer includes it.
-
-> Note: vulnerabilities 6 and 7 live under `/api/users/...` (profile page), not under `/api/admin/...` — worth double-checking against whatever vulnerability list your course gave you, in case the naming differs from what's expected.
